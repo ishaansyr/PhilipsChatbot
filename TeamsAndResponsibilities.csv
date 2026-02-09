@@ -1,0 +1,16 @@
+﻿id,team,responsibility,questions
+1,R&D,Owns device technical specifications and core product design,Which team owns device specifications?
+2,Regulatory Affairs,Maintains and ensures compliance of Design History Files (DHF),Who is responsible for maintaining the Design History File (DHF)?
+3,R&D,Leads and executes formal design change processes,Which team approves design changes?
+4,Product Management,Defines and maintains product roadmaps and market strategy,Who manages product roadmaps?
+5,Product Management,Owns long-term platform strategy and portfolio direction,Which team owns platform strategy decisions?
+6,Quality,Leads CAPA investigations and corrective/preventive action processes,Which team is responsible for CAPA investigations?
+7,Post Market Surveillance,Monitors complaint trends and field performance data,Who handles complaint trending analysis?
+8,Quality,Ensures audit readiness and manages internal/external audit coordination,Which department manages audit readiness?
+9,Quality,Owns risk management documentation and risk files,Who owns risk management documentation?
+10,Supplier Quality,Manages supplier-related quality issues and SCAR processes,Which team works with suppliers on quality issues?
+11,R&D,Generates and maintains validation and verification reports,Who maintains validation and verification reports?
+12,Regulatory Affairs,Controls official release documentation and regulatory submissions,Which team controls release documentation?
+13,R&D,Coordinates formal design reviews across functions,Who is responsible for design review coordination?
+14,Marketing,Owns product marketing materials and commercial presentations,Which team owns product marketing materials?
+15,Commercial Excellence,Maintains internal product training content and enablement materials,Who maintains product training content for internal teams?
