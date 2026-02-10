@@ -3,6 +3,30 @@ import base64
 from test_system_lookup import classify, system_lookup, team_lookup
 from rag_engine import load_corpus, embed_texts, build_faiss_index, retrieve, generate_answer
 
+from PyPDF2 import PdfReader
+
+def process_uploaded_pdf(file_path):
+    text = ""
+
+    reader = PdfReader(file_path)
+    for page in reader.pages:
+        if page.extract_text():
+            text += page.extract_text() + "\n"
+
+    # Simple chunking (reuse your existing chunk size logic if different)
+    chunk_size = 800
+    overlap = 100
+
+    chunks = []
+    start = 0
+
+    while start < len(text):
+        end = start + chunk_size
+        chunks.append(text[start:end])
+        start += chunk_size - overlap
+
+    return chunks
+
 
 # ------------------ PAGE CONFIG ------------------
 
@@ -116,7 +140,7 @@ with st.sidebar:
         st.session_state.chat_history = []
 
     st.markdown("---")
-    
+
     st.markdown(
         """
         <div style="color:#0051A8; font-size:20px; font-weight:700;">
@@ -144,6 +168,14 @@ with st.sidebar:
 
     st.caption("Internal Demonstration Prototype")
 
+    st.markdown("---")
+    st.markdown("### Upload Supporting Document")
+
+    uploaded_file = st.file_uploader(
+        "Upload a PDF (used for this session only)",
+        type=["pdf"]
+    )
+
 # ------------------ INITIALISE RAG ------------------
 
 @st.cache_resource
@@ -161,6 +193,9 @@ index, chunks, metadata = initialise_rag()
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
+if "uploaded_index" not in st.session_state:
+    st.session_state.uploaded_index = None
+    st.session_state.uploaded_chunks = None
 
 # ------------------ INPUT SECTION ------------------
 
@@ -169,6 +204,23 @@ col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     user_query = st.text_input("", placeholder="Type your message...")
 
+import tempfile
+from rag_engine import load_corpus, embed_texts, build_faiss_index
+
+if uploaded_file is not None:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+        tmp.write(uploaded_file.read())
+        temp_path = tmp.name
+
+    # Load and chunk uploaded PDF
+    uploaded_docs = process_uploaded_pdf(temp_path)
+    uploaded_embeddings = embed_texts(uploaded_docs)
+    uploaded_index = build_faiss_index(uploaded_embeddings)
+
+    st.session_state.uploaded_index = uploaded_index
+    st.session_state.uploaded_chunks = uploaded_docs
+
+    st.success("Document processed and ready for contextual queries.")
 
 # ------------------ ROUTING ------------------
 
@@ -219,8 +271,24 @@ if user_query:
 
     else:
         with st.spinner("Searching internal knowledge..."):
-            retrieved = retrieve(user_query, index, chunks, metadata, k=3)
-            response = generate_answer(user_query, retrieved)
+
+            # Retrieve from internal curated corpus
+            internal_chunks = retrieve(user_query, index, chunks, metadata, k=3)
+
+            combined_chunks = internal_chunks
+
+            # If a session upload exists, retrieve from it too
+            if st.session_state.uploaded_index is not None:
+                uploaded_chunks = retrieve(
+                    user_query,
+                    st.session_state.uploaded_index,
+                    st.session_state.uploaded_chunks,
+                    None,   # no metadata for uploaded docs
+                    k=2
+                )
+                combined_chunks = internal_chunks + uploaded_chunks
+
+            response = generate_answer(user_query, combined_chunks)
 
     st.session_state.chat_history.append(("user", user_query))
     st.session_state.chat_history.append(("assistant", response))
