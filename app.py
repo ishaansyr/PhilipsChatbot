@@ -30,10 +30,12 @@ def process_uploaded_pdf(file_path):
 
 # ------------------ PAGE CONFIG ------------------
 
-st.set_page_config(page_title="Philips Knowledge Assistant", layout="wide")
+st.set_page_config(page_title="Philips Enterprise Knowledge Navigator", layout="wide")
 
 
 # ------------------ HELPER: LOAD LOGO ------------------
+
+import base64
 
 def load_logo(path):
     with open(path, "rb") as f:
@@ -44,53 +46,65 @@ def load_logo(path):
 
 st.markdown(
     """
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
     html, body, [class*="css"]  {
-        font-family: 'Inter', sans-serif;
-        background-color: #ffffff;
+        font-family: 'IBM Plex Sans', sans-serif;
+        background-color: #F5F7FA;
     }
 
     .stApp {
-        background-color: #ffffff;
+        background-color: #F5F7FA;
     }
 
-    /* Input styling */
+    /* Constrain Main Content Width */
+    .main .block-container {
+        max-width: 1000px;
+        padding-top: 2rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Elevated Card Container */
+    .assistant-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 60px 60px 50px 60px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+        position: relative;
+    }
+
+    /* Divider Under Title */
+    .sub-divider {
+        width: 80px;
+        height: 3px;
+        background-color: #0051A8;
+        margin: 24px auto 20px auto;
+        opacity: 0.85;
+    }
+
+    /* Input Styling */
     .stTextInput>div>div>input {
         border-radius: 40px;
-        border: 1px solid #d0d0d0;
-        padding: 14px 20px;
+        border: 1px solid #E0E0E0;
+        padding: 16px 24px;
         font-size: 18px;
-        box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        transition: all 0.2s ease;
     }
 
     .stTextInput>div>div>input:focus {
         border: 2px solid #003087;
-        box-shadow: 0px 6px 16px rgba(0,0,0,0.12);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.10);
     }
 
-    hr {
-        border: 1px solid #003087;
-        opacity: 0.2;
-    }
     </style>
     """,
     unsafe_allow_html=True
 )
-
-st.markdown("""
-<style>
-.main .block-container {
-    max-width: 900px;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-}
-</style>
-""", unsafe_allow_html=True)
-
 
 
 # ------------------ HEADER SECTION ------------------
@@ -100,37 +114,49 @@ import streamlit.components.v1 as components
 logo_base64 = load_logo("philips logo.png")
 
 header_html = f"""
-<div style="position: relative; padding-top: 60px; padding-bottom: 40px; font-family: 'Inter', sans-serif; background-color: white;">
+<div class="assistant-card">
 
-    <div style="position: absolute; top: -20px; right: 100px;">
-        <img src="data:image/png;base64,{logo_base64}" width="200">
+    <div style="position: absolute; top: 30px; right: 40px;">
+        <img src="data:image/png;base64,{logo_base64}" width="140">
     </div>
 
     <div style="text-align: center;">
-    <div style="
-    font-size: 78px;
-    font-weight: 800;
-    color: #0051A8;
-    letter-spacing: 2px;
-">
-    PHILIPS
-</div>
 
-<div style="
-    font-size: 48px;
-    font-weight: 800;
-    color: #0051A8;
-    margin-top: 8px;
-">
-    Knowledge Assistant
-</div>
+        <div style="
+            font-size: 64px;
+            font-weight: 800;
+            color: #0051A8;
+            letter-spacing: 1.2px;
+        ">
+            PHILIPS
+        </div>
+
+        <div style="
+            font-size: 40px;
+            font-weight: 600;
+            color: #003087;
+            margin-top: 12px;
+        ">
+            Enterprise Knowledge Navigator
+        </div>
+
+        <div class="sub-divider"></div>
+
+        <div style="
+            font-size: 18px;
+            font-weight: 400;
+            color: #5F6B7A;
+            margin-top: 6px;
+        ">
+            A unified assistant for projects, operations, and internal systems
+        </div>
 
     </div>
 
 </div>
 """
 
-components.html(header_html, height=240)
+components.html(header_html, height=360)
 
 # ---------- SIDEBAR ----------
 
