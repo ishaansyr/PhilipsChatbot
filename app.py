@@ -260,17 +260,17 @@ if user_query:
             task, system, link = result
 
             response = f"""
-            <div style="line-height:1.6;">
-            <b style="color:#003087;">Task</b><br>
-            {task}<br><br>
+            <div style="line-height:1.6; font-size:18px;">
+            New employees can complete this action via <b>{system}</b>.
 
-            <b style="color:#003087;">System</b><br>
-            {system}<br><br>
+            To {task.lower()}, please access the portal below.
 
-            <b style="color:#003087;">Access Link</b><br>
+            <br><br>
+            <b style="color:#003087;">Link:</b><br>
             <a href="{link}" target="_blank">{link}</a>
             </div>
             """
+
         else:
             with st.spinner("Searching internal knowledge..."):
                 retrieved = retrieve(user_query, index, chunks, metadata, k=3)
@@ -280,16 +280,15 @@ if user_query:
         result = team_lookup(user_query)
         if result:
             team, responsibility = result
-
             response = f"""
-            <div style="line-height:1.6;">
-            <b style="color:#003087;">Team</b><br>
-            {team}<br><br>
+            <div style="line-height:1.6; font-size:18px;">
+            The <b>{team}</b> team owns this area.
 
-            <b style="color:#003087;">Responsibility</b><br>
+            <br><br>
             {responsibility}
             </div>
             """
+
         else:
             with st.spinner("Searching internal knowledge..."):
                 retrieved = retrieve(user_query, index, chunks, metadata, k=3)
